@@ -1,0 +1,16 @@
+[package]
+name = "store"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+tonic = "0.5"
+prost = "0.8"
+prost-types = "0.8"
+leveldb = "0.8"
+tokio = { version = "1.12", features = ["macros", "rt-multi-thread"] }
+machine-uid = "0.2"
+lazy_static = "1.4" 
+
+[build-dependencies]
+tonic-build = "0.5"

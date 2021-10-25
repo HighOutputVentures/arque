@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package store;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+message Error {
+  uint32 code = 1;
+  string message = 2;
+}
+
+message Event {
+  bytes id = 1;
+  string type = 2;
+  uint32 version = 3;
+  bytes aggregate_id = 4;
+  uint64 aggregate_version = 5;
+  google.protobuf.Any data = 6;
+  google.protobuf.Any meta = 7;
+  google.protobuf.Timestamp timestamp = 8;
+}
+
+message CreateEventRequest {
+  string type = 1;
+  uint32 version = 2;
+  bytes aggregate_id = 3;
+  uint64 aggregate_version = 4;
+  google.protobuf.Any data = 5;
+  google.protobuf.Any meta = 6;
+}
+
+message CreateEventResponse {
+  Error error = 1;
+}
+
+// message ReadAggregateEventsRequest {
+//   bytes aggregate_id = 1;
+//   uint64 aggregate_version_start = 2;
+//   uint64 aggregate_version_end = 3;
+//   repeated string types = 4;
+// }
+
+// message ReadAggregateEventsResponse {
+//   Error error = 1;
+//   message ReadAggregateEventsResponseData {
+//     repeated Event events = 1;
+//   }
+//   ReadAggregateEventsResponseData data = 2;
+// }
+
+// message ReadEventStreamRequest {
+//   bytes id_start = 1;
+//   repeated string types = 2;
+// }
+
+// message ReadEventStreamResponse {
+//   Error error = 1;
+//   message ReadEventStreamResponseData {
+//     Event event = 1;
+//   }
+//   ReadEventStreamResponseData data = 2;
+// }
+
+// message ReadEventsRequest {
+//   bytes id_start = 1;
+//   repeated string types = 2;
+//   uint32 limit = 3;
+// }
+
+// message ReadEventsResponse {
+//   Error error = 1;
+//   message ReadEventsResponseData {
+//     repeated Event events = 1;
+//   }
+//   ReadEventsResponseData data = 2;
+// }
+
+service Store {
+  rpc CreateEvent(CreateEventRequest) returns (CreateEventResponse);
+  // rpc ReadAggregateEvents(ReadAggregateEventsRequest) returns (ReadAggregateEventsResponse);
+  // rpc ReadEvents(ReadEventsRequest) returns (ReadEventsResponse);
+  // rpc ReadEventStream(ReadEventStreamRequest) returns (stream ReadEventStreamResponse);
+}
