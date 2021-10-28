@@ -210,6 +210,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "hex"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+
+[[package]]
 name = "http"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -611,11 +617,14 @@ dependencies = [
 name = "store"
 version = "0.1.0"
 dependencies = [
+ "bytes",
+ "hex",
  "lazy_static",
  "leveldb",
  "machine-uid",
  "prost",
  "prost-types",
+ "rand",
  "tokio",
  "tonic",
  "tonic-build",

@@ -18,15 +18,15 @@ pub struct StoreService {}
 
 #[tonic::async_trait]
 impl Store for StoreService {
-  async fn create_event(&self, request: Request<CreateEventRequest>) -> Result<Response<CreateEventResponse>, Status> {
-    request.get_ref();
-    unimplemented!()
-  }
+    async fn create_event(&self, request: Request<CreateEventRequest>) -> Result<Response<CreateEventResponse>, Status> {
+        request.get_ref();
+        unimplemented!()
+    }
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "[::1]:10000".parse().unwrap();
+    let addr = "[::1]:22714".parse().unwrap();
 
     let store = StoreService::default();
 
