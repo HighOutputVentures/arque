@@ -5,6 +5,7 @@ mod store {
     tonic::include_proto!("store");
 }
 mod lib;
+mod handlers;
 
 use tonic::{transport::Server};
 use store::store_server::{Store, StoreServer};
@@ -19,7 +20,9 @@ pub struct StoreService {}
 #[tonic::async_trait]
 impl Store for StoreService {
     async fn create_event(&self, request: Request<CreateEventRequest>) -> Result<Response<CreateEventResponse>, Status> {
-        request.get_ref();
+        let request = request.get_ref();
+        let data = request.data.as_ref().unwrap();
+        println!("{:?}", data);
         unimplemented!()
     }
 }
