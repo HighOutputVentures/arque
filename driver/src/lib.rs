@@ -2,8 +2,6 @@ mod store {
     tonic::include_proto!("store");
 }
 
-use std::vec;
-
 pub use prost_types::{Struct, Value};
 use store::store_client::{StoreClient};
 use store::{CreateEventRequest};
@@ -25,38 +23,37 @@ impl Options {
 }
 
 pub struct Driver {
-    options: Options,
     client: StoreClient<Channel>
 }
 
-impl Driver {
-    pub async fn open(options: Options) -> Self {
-        let client = match StoreClient::connect(format!("{}:{}", options.hostname, options.port)).await {
-            Ok(client) => client,
-            Err(e) => panic!("unable to connect to server: {}", e)
-        };
-
-        Driver {
-            options,
-            client
-        }
-    }
-
-    pub async fn create_event() {
-        let _req = Request::new(CreateEventRequest {
-            r#type: "".to_string(),
-            aggregate_id: vec![],
-            aggregate_version: 0,
-            version: 0,
-            data: 
-        });
-    }
+pub struct CreateEventParams {
+    r#type: String,
+    aggregate_id: [u8; 16],
+    aggregate_version: u64,
+    data: Struct,
+    meta: Struct,
 }
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+impl Driver {
+    pub async fn open(options: Options) -> Result<Self, Box<dyn std::error::Error>> {
+        let client = StoreClient::connect(format!("{}:{}", options.hostname, options.port)).await?;
+
+        Ok(Driver {
+            client
+        })
+    }
+
+    pub async fn create_event(&mut self, params: CreateEventParams) -> Result<(), Box<dyn std::error::Error>> {
+        let req = Request::new(CreateEventRequest {
+            r#type: params.r#type,
+            aggregate_id: params.aggregate_id.to_vec(),
+            aggregate_version: params.aggregate_version,
+            data: Some(params.data),
+            meta: Some(params.meta),
+        });
+
+        self.client.create_event(req).await?;
+
+        Ok(())
     }
 }

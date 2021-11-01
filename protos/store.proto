@@ -13,7 +13,6 @@ message Error {
 message Event {
   bytes id = 1;
   string type = 2;
-  uint32 version = 3;
   bytes aggregate_id = 4;
   uint64 aggregate_version = 5;
   google.protobuf.Struct data = 6;
@@ -23,7 +22,6 @@ message Event {
 
 message CreateEventRequest {
   string type = 1;
-  uint32 version = 2;
   bytes aggregate_id = 3;
   uint64 aggregate_version = 4;
   google.protobuf.Struct data = 5;
@@ -38,7 +36,6 @@ message ReadAggregateEventsRequest {
   bytes aggregate_id = 1;
   uint64 aggregate_version_start = 2;
   uint64 aggregate_version_end = 3;
-  repeated string types = 4;
 }
 
 message ReadAggregateEventsResponse {

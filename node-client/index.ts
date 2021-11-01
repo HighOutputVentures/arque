@@ -11,7 +11,7 @@ type Event<TType extends string = string, TData = unknown, TMeta = unknown> = {
 interface Aggregate<TState> {
   id: Buffer;
   version: number;
-  createEvent(): Promise<void>;
+  createEvent(event: Event<string, TState>): Promise<void>;
   fold(): Promise<TState>;
 }
 
@@ -57,4 +57,42 @@ interface Arque {
       }
     ]
   }): Promise<Connection>,
+}
+
+interface Page<TNode> {
+  edges: [{
+    node: TNode;
+    cursor: Buffer;
+  }];
+  pageInfo: {
+    hasNextPage: boolean;
+    endCursor: null | Buffer;
+  };
+}
+
+interface Driver {
+  connect(params: {
+    hostname?: string;
+    port?: number;
+    servers?: [
+      {
+        hostname?: string;
+        port?: number;
+      }
+    ]
+  }): Promise<void>;
+  createEvent(params: {
+    type: string;
+    aggregateId: Buffer;
+    aggregateVersion: number;
+    data: Record<string, any>;
+    meta?: Record<string, any>;
+  }): Promise<void>;
+  readAggregateEvents(first?: number, after?: Buffer, params: {
+    aggregateId: Buffer;
+  }): Promise<Page<Event>>;
+  readEvents(first?: number, after?: Buffer, params: {
+    types: string[]
+  }): Promise<Page<Event>>;
+  subscribe(): Promise<Stream>;
 }
