@@ -1,0 +1,13 @@
+namespace event;
+
+table Event {
+  id: [ubyte];
+  type: string;
+  aggregate_id: [ubyte];
+  aggregate_version: ulong;
+  data: [ubyte];
+  meta: [ubyte];
+  timestamp: ulong;
+}
+
+root_type Event;

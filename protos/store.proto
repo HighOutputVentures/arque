@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package store;
 
-import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
 message Error {
@@ -15,8 +14,8 @@ message Event {
   string type = 2;
   bytes aggregate_id = 4;
   uint64 aggregate_version = 5;
-  google.protobuf.Struct data = 6;
-  google.protobuf.Struct meta = 7;
+  bytes data = 6;
+  bytes meta = 7;
   google.protobuf.Timestamp timestamp = 8;
 }
 
@@ -24,8 +23,8 @@ message CreateEventRequest {
   string type = 1;
   bytes aggregate_id = 3;
   uint64 aggregate_version = 4;
-  google.protobuf.Struct data = 5;
-  google.protobuf.Struct meta = 6;
+  bytes data = 6;
+  bytes meta = 7;
 }
 
 message CreateEventResponse {

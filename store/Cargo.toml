@@ -14,6 +14,16 @@ lazy_static = "1.4"
 rand = "0.8"
 bytes = "1.1"
 hex = "0.4"
+flatbuffers = "2.0"
+db-key = "0.0.5"
 
 [build-dependencies]
 tonic-build = "0.5"
+flatc-rust = "0.2"
+
+[dev-dependencies]
+criterion = { version = "0.3", features = ["async_tokio"] }
+
+[[bench]]
+name = "benches"
+harness = false

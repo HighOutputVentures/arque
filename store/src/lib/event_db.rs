@@ -1,33 +1,39 @@
-use std::path::Path;
+use super::{Event, EventId};
 use leveldb::database::Database;
 use leveldb::kv::KV;
 use leveldb::options::{Options, WriteOptions};
-use std::time::Instant;
+use std::path::Path;
 
-
-struct EventDb {}
+pub struct EventDb {
+    db: Database<EventId>,
+}
 
 impl EventDb {
-  fn open(path: &Path) {
-    let mut options = Options::new();
-    options.create_if_missing = true;
-    let db = Database::open(path, options).unwrap();
+    pub fn open(path: &Path) -> EventDb {
+        let mut options = Options::new();
+        options.create_if_missing = true;
+        let db = Database::open(path, options).unwrap();
 
-    let write_opts = WriteOptions::new();
-    let instant = Instant::now();
-    for n in 0..1000000 {
-      db.put(write_opts, n, &[1]).unwrap();
+        EventDb { db }
     }
-    println!("{:?}", instant.elapsed());
-  }
+
+    pub fn insert(&mut self, event: Event) {
+        let options = WriteOptions::new();
+
+        let reader = event.as_reader();
+
+        self.db.put(options, &reader.get_id(), &event.buf).unwrap();
+    }
+
+    pub fn get() {}
 }
 
 mod tests {
-  use super::*;
+    use super::*;
 
-  #[test]
-  fn generate_unique() {
-    let path = Path::new("/tmp/event_db");
-    EventDb::open(path);
-  }
+    #[test]
+    fn generate_unique() {
+        let path = Path::new("/tmp/event_db");
+        EventDb::open(path);
+    }
 }
