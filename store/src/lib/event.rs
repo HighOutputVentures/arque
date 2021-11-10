@@ -9,12 +9,12 @@ pub struct Event {
     pub buf: Vec<u8>,
 }
 
-pub struct EventArgs {
+pub struct EventArgs<'a> {
     pub r#type: String,
     pub aggregate_id: [u8; 16],
     pub aggregate_version: u64,
-    pub data: Vec<u8>,
-    pub meta: Vec<u8>,
+    pub data: &'a Vec<u8>,
+    pub meta: &'a Vec<u8>,
 }
 
 pub struct EventReader<'a> {
@@ -58,8 +58,8 @@ impl Event {
             type_: Some(fbb.create_string(&args.r#type)),
             aggregate_id: Some(fbb.create_vector(&args.aggregate_id)),
             aggregate_version: args.aggregate_version,
-            data: Some(fbb.create_vector(&args.data)),
-            meta: Some(fbb.create_vector(&args.meta)),
+            data: Some(fbb.create_vector(args.data)),
+            meta: Some(fbb.create_vector(args.meta)),
             timestamp,
         };
 
@@ -89,8 +89,8 @@ mod tests {
             r#type: "AccountCreated".to_string(),
             aggregate_id: [0; 16],
             aggregate_version: 1,
-            data: vec![0; 32],
-            meta: vec![0; 32],
+            data: &vec![0; 32],
+            meta: &vec![0; 32],
         });
 
         let reader = event.as_reader();

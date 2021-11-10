@@ -11,13 +11,9 @@ mod store {
 use criterion::{criterion_group, criterion_main, Criterion};
 use lib::EventId;
 
-pub fn event_id_new(c: &mut Criterion) {
+pub fn bench_event_id_new(c: &mut Criterion) {
     c.bench_function("EventId::new()", |b| b.iter(|| EventId::new()));
 }
 
-pub fn create_event(c: &mut Criterion) {
-    c.bench_function("create_event(..)", |b| b.iter(|| EventId::new()));
-}
-
-criterion_group!(benches, event_id_new, create_event);
+criterion_group!(benches, bench_event_id_new);
 criterion_main!(benches);

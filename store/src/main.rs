@@ -24,9 +24,6 @@ impl Store for StoreService {
         &self,
         request: Request<CreateEventRequest>,
     ) -> Result<Response<CreateEventResponse>, Status> {
-        let request = request.get_ref();
-        println!("{:?}", request);
-
         unimplemented!()
     }
 }
