@@ -1,4 +1,8 @@
-type Event<TType extends string = string, TData = unknown, TMeta = unknown> = {
+export type Event<
+  TType extends string = string,
+  TData = unknown,
+  TMeta = unknown,
+> = {
   id: Buffer;
   type: TType;
   aggregateId: Buffer;
@@ -8,65 +12,71 @@ type Event<TType extends string = string, TData = unknown, TMeta = unknown> = {
   timestamp: Date;
 };
 
-interface Aggregate<TState> {
+export interface Aggregate<TState> {
   id: Buffer;
   version: number;
-  createEvent(event: Event<string, TState>): Promise<void>;
-  fold(): Promise<TState>;
+  createEvent(event: Event): Promise<void>;
+  fold(): Promise<TState | null>;
 }
 
-interface Projection<TState> {
+export interface Projection<TState> {
   id: Buffer;
-  state: TState;
+  state: TState | null;
   start(): Promise<void>;
   stop(): Promise<void>;
 }
 
-interface Connection {
+export type LoadAggregateOptions<TState> = {
+  eventHandlers?: Record<
+    string,
+    (event: Event, state: TState) => Promise<TState> | TState
+  >;
+  onInitializeState?: () => Promise<TState> | TState;
+  onShouldTakeSnapshot?: (event: Event, state: TState) => Promise<boolean>;
+  onLoadSnapshot?: (aggregateId: Buffer) => Promise<{
+    aggregateVersion: number;
+    state: TState;
+  }>;
+  onTakeSnapshot?: (
+    aggregateId: Buffer,
+    aggregateVersion: number,
+    state: TState,
+  ) => Promise<void>;
+};
+
+export type InitializeProjectionOptions<TState> = {
+  eventHandlers?: Record<
+    string,
+    (event: Event, state: TState) => Promise<TState> | TState
+  >;
+  onInitializeState?: () => Promise<TState> | TState;
+  autoStart?: true;
+};
+
+export interface ArqueConnection {
   loadAggregate<TState>(
     id: Buffer,
-    options?: {
-      eventHandlers?: Record<
-        string,
-        (event: Event, state: TState) => Promise<TState> | TState
-      >;
-      onInitializeState?: () => Promise<TState> | TState;
-      onShouldTakeSnapshot?: (event: Event, state: TState) => Promise<boolean>;
-      onLoadSnapshot?: (aggregateId: Buffer) => Promise<{
-        aggregateVersion: number;
-        state: TState;
-      }>;
-      onTakeSnapshot?: (
-        aggregateId: Buffer,
-        aggregateVersion: number,
-        state: TState,
-      ) => Promise<void>;
-    },
+    options?: LoadAggregateOptions<TState>,
   ): Promise<Aggregate<TState>>;
   initializeProjection<TState>(
     id: Buffer,
-    options?: {
-      eventHandlers?: Record<
-        string,
-        (event: Event, state: TState) => Promise<TState> | TState
-      >;
-      onInitializeState?: () => Promise<TState> | TState;
-      autoStart?: true;
-    },
+    options?: InitializeProjectionOptions<TState>,
   ): Promise<Projection<TState>>;
 }
 
-interface Arque {
-  connect(options: {
-    hostname?: string;
-    port?: number;
-    servers?: [
-      {
-        hostname?: string;
-        port?: number;
-      },
-    ];
-  }): Promise<Connection>;
+export type ArqueConnectionOptions = {
+  hostname?: string;
+  port?: number;
+  servers?: [
+    {
+      hostname?: string;
+      port?: number;
+    },
+  ];
+};
+
+export interface Arque {
+  connect(options: ArqueConnectionOptions): Promise<ArqueConnection>;
 }
 
 interface Page<TNode> {
